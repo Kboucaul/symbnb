@@ -53,6 +53,8 @@ class AdController extends AbstractController
                 $image->setAd($ad);
                 $manager->persist($image);
             }
+            $ad->setAuthor($this->getUser());
+
 
             //on fait persister dans la base de données
             $manager->persist($ad);
