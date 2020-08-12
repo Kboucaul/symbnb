@@ -7,7 +7,6 @@ use App\Repository\AdRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -72,6 +71,12 @@ class Ad
      * @Assert\Valid()
      */
     private $images;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="ads")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
 
     public function __construct()
     {
@@ -209,6 +214,18 @@ class Ad
                 $image->setAd(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): self
+    {
+        $this->author = $author;
 
         return $this;
     }
