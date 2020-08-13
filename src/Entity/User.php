@@ -84,6 +84,11 @@ class User implements UserInterface
      */
     private $ads;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Role::class, mappedBy="users")
+     */
+    private $userRoles;
+
     public function getFullName()
     {
         return "{$this->firstName} {$this->lastName}";
@@ -107,6 +112,7 @@ class User implements UserInterface
     public function __construct()
     {
         $this->ads = new ArrayCollection();
+        $this->userRoles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -243,7 +249,24 @@ class User implements UserInterface
 
     }
     public function getRoles() {
-        return (['ROLE_USER']);
+        //Ici je veux recuperer un tableau contenant seulement le title_role
+        $roles = $this->userRoles->map(function($roles){
+            return $roles->getTitle();
+        })->toArray();
+
+        //tous les utilisateurs doivent etre des ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        /*
+        **  Maintenant on fait la difference entre :
+        **  -Un admin
+        **  -Un role_user
+        **  -Un anonyme
+        **
+        **  ON A DONC UNE HIERARCHIE DES RESPONSABILITES
+        */
+
+        return ($roles);
     }
 
     public function getPassword() {
@@ -258,5 +281,33 @@ class User implements UserInterface
     }
 
     public function eraseCredentials() {
+    }
+
+    /**
+     * @return Collection|Role[]
+     */
+    public function getUserRoles(): Collection
+    {
+        return $this->userRoles;
+    }
+
+    public function addUserRole(Role $userRole): self
+    {
+        if (!$this->userRoles->contains($userRole)) {
+            $this->userRoles[] = $userRole;
+            $userRole->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRole(Role $userRole): self
+    {
+        if ($this->userRoles->contains($userRole)) {
+            $this->userRoles->removeElement($userRole);
+            $userRole->removeUser($this);
+        }
+
+        return $this;
     }
 }

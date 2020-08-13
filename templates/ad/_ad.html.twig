@@ -23,6 +23,10 @@
                 {{ ad.introduction }}
             </p>
             <a href="{{ url }}" class="btn btn-secondary">En savoir plus</a>
+            {% if app.user and ad.author == app.user %}
+              <a href="{{ path('ads_edit', {'slug': ad.slug }) }}" class="btn btn-secondary">Modifier l'annonce</a>
+              <a href="{{ path('ads_delete', {'slug': ad.slug }) }}" class="btn btn-danger mt-2" onclick="return confirm(`Voulez vous vraiment supprimer l'annonce : {{ad.title}} ?`)">Supprimer l'annonce</a>
+             {% endif %}
         </div>
     </div>
 </div>
