@@ -7,6 +7,7 @@ use Faker\Factory;
 use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\Image;
+use App\Entity\Booking;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -95,7 +96,47 @@ class AppFixtures extends Fixture
                         ->setAd($ad);
                 $manager->persist($image);
             }
+            // gestion des reservation
 
+            for ($j = 1; $j <= mt_rand(0, 10); $j++)
+            {
+                $booking = new Booking();
+
+                $createdAt = $faker->dateTimeBetween('-6 months'); //date a partir de 6 mois auparavant
+                
+                $startDate = $faker->dateTimeBetween('-3 months');
+              
+                //on calcul une duree de sejour
+                $duration = mt_rand(1, 7);
+                //on clone la startDate pour ne pas la modifier
+                $endDate = (clone $startDate)->modify("+$duration days");
+
+                //On calcul le montant
+                $amount = $duration * $ad->getPrice();
+
+                //On cherche le booker l'utilisateur qui reserve
+
+                $booker = $users[mt_rand(0, count($users) - 1)];
+
+                //on commentaire ?
+                //si 0 ->rien
+                // si 1 -> un commentaire
+                $commentOrNot = mt_rand(0, 1);
+                if ($commentOrNot == 0)
+                    $comment = "";
+                else
+                    $comment = $faker->paragraph(2); 
+
+                $booking->setBooker($booker)
+                        ->setAd($ad)
+                        ->setCreatedAt($createdAt)
+                        ->setStartDate($startDate)
+                        ->setEndDate($endDate)
+                        ->setAmount($amount)
+                        ->setComment($comment);
+
+                $manager->persist($booking);
+            }
             $manager->persist($ad);
         }
         $manager->flush();

@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservation n°{{booking.id}}{% endblock %}
+
+{% block body %}
+
+{% set ad = booking.ad %}
+{% set author = ad.author %}
+    <div class="container">
+        <h1>Votre réservation (n°{{ booking.id }})</h1>
+
+        {% if app.request.query.get('withAlert') %}
+            <div class="alert alert-success">
+                <h4 class="alert-heading">Bravo !</h4>
+                <p>
+                    Votre réservation aupres de
+                    <strong>
+                        <a href="{{ path('user_show', {'slug': author.slug }) }}" class="text-decoration-none">{{ author.firstName }}</a>
+                    </strong>
+                    pour l'annonce : 
+                    <strong>
+                        <a href="{{  path("ads_show", {'slug': ad.slug }) }}" class="text-decoration-none">{{ ad.title }}</a>
+                    </strong>
+                    a bien été prise en compte !
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-light">
+                    <h2>Détails</h2>
+                    <dl class="row">
+                        <dt class="col-md-4">Numéro</dt>
+                        <dd class="col-md-8">{{ booking.id }}</dd>
+                        <dt class="col-md-4">Date d'arrivée</dt>
+                        <dd class="col-md-8">{{ booking.startDate | date('d/m/yy') }}</dd>
+                        <dt class="col-md-4">Date de départ</dt>
+                        <dd class="col-md-8">{{ booking.endDate | date('d/m/yy') }}</dd>
+                        <dt class="col-md-4">Nombre de nuits</dt>
+                        <dd class="col-md-8">{{ booking.duration }}</dd>
+                        <dt class="col-md-4">Montant total</dt>
+                        <dd class="col-md-8">{{ booking.amount }} &euro;</dd>
+                        <dt class="col-md-4">Commentaire</dt>
+                        <dd class="col-md-8">{{ booking.comment }}</dd>
+                    </dl>
+
+                    <hr>
+
+                    <h2 class="alert-heading">Votre hôte</h2>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <a href="{{ path('user_show', {'slug': author.slug }) }}" class="text-decoration-none">
+                                <img src="{{ author.picture }}" class="avatar avatar-medium" alt="Avatar de {{ author.fullName }}">
+                            </a>
+                        </div>
+                        <div class="col-9">
+                            <h4>
+                                <a href="{{ path('user_show', {'slug': author.slug }) }}" class="text-decoration-none">{{ author.fullName }}</a>
+                            </h4>
+                        
+                          <a href="{{ path('user_show', {'slug': author.slug }) }}">
+                            <span class="badge badge-primary">{{ author.ads | length }} {% if author.ads | length <= 1 %} annonce{% else %} annonces{% endif %}</span>
+                          </a>     
+                        </div>
+                    </div>
+                    {{ author.description | raw }}
+
+                    <a href="" class="btn btn-success text-decoration-none"><strong>Contactez-moi</strong></a>
+
+                </div>
+            </div>
+            <div class="col">
+
+            <div class="alert alert-light">
+                <h2 class="alert-heading">Votre Hébergement</h2>
+                <h4>
+                    <a href="{{ path('ads_show', {'slug': ad.slug }) }}" class="text-decoration-none">{{ ad.title }}</a>
+                </h4>
+                <img src="{{ ad.coverImage }}" alt="Image de {{ ad.title }}" class="img-fluid mb-3">
+                {{ ad.content | raw}}
+                <a href="{{ path('ads_show', {'slug': ad.slug })}}" class="btn btn-primary">Plus d'informations</a>
+            </div>
+            
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
