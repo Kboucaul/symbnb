@@ -6,7 +6,11 @@
             <!--
                 Plus tard systeme de notation
             -->
-            <small>Pas encore noté</small>
+            {% if (ad.comments | length) > 0%}
+                <small>{% include 'partial/rating.html.twig' with {'rating': ad.avgRating} %}({{ad.comments | length}})</small>
+            {% else %}
+                <small>Pas encore noté</small>
+            {% endif %}
         </div>
 
 

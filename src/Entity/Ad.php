@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
 use Cocur\Slugify\Slugify;
 use App\Repository\AdRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -83,10 +85,16 @@ class Ad
      */
     private $bookings;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="ad", orphanRemoval=true)
+     */
+    private $comments;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
         $this->bookings = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     /**
@@ -266,12 +274,27 @@ class Ad
 
         return $this;
     }
+
+    /**
+     * 
+     */
+    public function getAvgRating()
+    {
+        //Calculer la somme des notations
+        $sum = array_reduce($this->comments->toArray(), function($total, $comment) {
+            return $total + $comment->getRating();
+        }, 0);
+        //faire la division pour avoir la moyenne
+        if (count($this->comments) > 0)
+            return floor($sum / count($this->comments));
+        return 0;
+    }
+
     /**
     * Donne un tableau des jours qui ne sont pas disponibles pour cette annonce
     *
     * @return array un tableau d'objet datetime de sjours occupés
     */
-
     public function getNotAvailableDays()
     {
         $notAvailableDays = [];
@@ -292,5 +315,51 @@ class Ad
             $notAvailableDays = array_merge($notAvailableDays, $days);
         }
         return $notAvailableDays;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setAd($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            // set the owning side to null (unless already changed)
+            if ($comment->getAd() === $this) {
+                $comment->setAd(null);
+            }
+        }
+
+        return $this;
+    }
+    /**
+     * Permet de recuperer le commentaire de l'auteur en parametre si il a commenté
+     *
+     * @param User $author
+     * @return Comment|null
+     */
+    public function getCommentFromAuthor(User $author)
+    {
+        foreach($this->comments as $comment)
+        {
+            if ($author === $comment->getAuthor())
+                return $comment;
+            return null;
+        }
     }
 }
