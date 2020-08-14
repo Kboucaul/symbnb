@@ -5,11 +5,11 @@
 {% block body %}
 
 <div class="ad-title" style="background-image: url({{ ad.coverImage }})">
-    <div class="container">
+    <div class="container text-center">
         <h1>{{ad.title}}</h1>
         <p>{{ ad.introduction | raw }}</p>
         <p class="h2">
-            <strong>{{ad.rooms}} chambres</strong> pour <strong>{{ad.price}}&euro;</strong> par nuit.
+            <strong>{{ad.rooms}} chambres</strong> pour <strong>{{ad.price | number_format(2, ',',' ')}}&euro;</strong> par nuit.
         </p>
         <a href="{{ path('booking_create', {'slug': ad.slug}) }}" class="btn btn-primary">Réserver !</a>
         {% if app.user and ad.author == app.user %}
@@ -85,21 +85,21 @@
                     <h2>Cette annonce n'a pas encore reçu de commentaires...</h2>
                 {% endif %}
         </div>
-        <div class="col-4">
+        <div class="col mb-3">
         {% set a = ad.author %}
             <div class="row">
-               <div class="col-3">
-               <a href="/user/{{a.slug}}"><img src="{{a.picture}}" alt="Avatar de {{ a.fullName }}" class="avatar avatar-medium"></a>
+               <div class="col-3 mr-1">
+                    <a href="/user/{{a.slug}}"><img src="{{a.picture}}" alt="Avatar de {{ a.fullName }}" class="avatar avatar-medium"></a>
                </div>
-                <div class="col-9">
+                <div class="col">
                     <h3><a href="/user/{{a.slug}}">{{a.fullName }}</a></h3>
                     <a href="/user/{{a.slug}}">
                         <span class="badge badge-primary">{{a.ads | length}} {% if (a.ads | length) <= 1 %}annonce{% else %}annonce{% endif %}</span>
                     </a>
                 </div>
             </div>
-           <p> {{a.description | raw}}</p>
         </div>
+        <p>{{a.description | raw}}</p>
     </div>
 </div>
 {% endblock %}

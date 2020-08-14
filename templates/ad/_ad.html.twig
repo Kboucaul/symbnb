@@ -2,7 +2,7 @@
     <div class="col-md-4">
     <div class="card bg-light mb-3">
         <div class="card-header text-center">
-            {{ ad.rooms }} chambres, <strong>{{ ad.price }}&euro; / nuit</strong><br/>
+            {{ ad.rooms }} chambres, <strong>{{ ad.price | number_format(2, ',', ' ')}}&euro; / nuit</strong><br/>
             <!--
                 Plus tard systeme de notation
             -->
@@ -26,7 +26,7 @@
             <p class="card-text">
                 {{ ad.introduction }}
             </p>
-            <a href="{{ url }}" class="btn btn-secondary">En savoir plus</a>
+            <a href="{{ url }}" class="btn btn-primary float-right">En savoir plus</a>
             {% if app.user and ad.author == app.user %}
               <a href="{{ path('ads_edit', {'slug': ad.slug }) }}" class="btn btn-secondary">Modifier l'annonce</a>
               <a href="{{ path('ads_delete', {'slug': ad.slug }) }}" class="btn btn-danger mt-2" onclick="return confirm(`Voulez vous vraiment supprimer l'annonce : {{ad.title}} ?`)">Supprimer l'annonce</a>
