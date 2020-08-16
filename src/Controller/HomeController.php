@@ -1,6 +1,9 @@
 <?php 
 
 namespace App\Controller;
+
+use App\Repository\AdRepository;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,20 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 */ 
 
 class HomeController extends AbstractController{ 
-
-
- /** 
-     *@Route("/hello/{prenom}/{age}", name="hello")
-    */
-    public function hello($prenom = "anonyme", $age = 18)
-    {
-        //$prenom = "Jog";
-       // return new Response("Bonjour " . $prenom . " vous avez " . $age . " ans!");
-        return $this->render("hello.html.twig", [
-            "prenom" => $prenom,
-            "age" => $age
-        ]);
-    }
 
 /* 
 **Pour créer une classe : 3 pilliers 
@@ -46,7 +35,7 @@ Pour que cette annotation marche il faut utiliser le bon namespace
 /** 
 *@Route("/", name="homepage") 
 */
-    public function home() { 
+    public function home(AdRepository $adRepo, UserRepository $userRepo) { 
 
     /* 
     **Retourner un objet reponse 
@@ -56,16 +45,10 @@ Pour que cette annotation marche il faut utiliser le bon namespace
     ** le liens du fichier twig et un tableau associatifs 
     **  d'arguments a passer au template twig
     */
-    $tab = [
-       "Lior"=>31,
-       "Jog"=>25,
-       "Anne"=>55 
-    ];
     return $this->render("home.html.twig", [
-        "title"=>"Bonjour a vous :)",
-        "age"=>12,
-        "tableau"=>$tab
-        ]);
+        'users' => $userRepo->findBestUsers(2),
+        'ads' => $adRepo->findBestAds(3)
+    ]);
 
 //ne pas oublier d’integrer le namespace 
 //une reponse est dans le namespace HttpFoundation\Response 
