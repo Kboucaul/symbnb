@@ -1,0 +1,25 @@
+<div class="d-flex justify-content-center">
+    <ul class="pagination">
+        {% if page > 1 %}
+            <li class="page-item {% if (page == 1) or (pages <= 1) %}disabled{% endif %}">
+                <a class="page-link" href="{{ path(route, {'page': page - 1}) }}">&laquo;</a>
+            </li>
+        {% endif %}
+        {% if pages == 0 %}
+             <li class="page-item active">
+                <a class="page-link" href="{{ path(route, {'page': 1}) }}">{{ 1 }}</a>
+            </li>
+        {% else %}
+            {% for i in 1..pages %}
+            <li class="page-item {% if page == i %}active{% endif %}">
+                <a class="page-link" href="{{ path(route, {'page': i}) }}">{{ i }}</a>
+            </li>
+            {% endfor %}
+        {% endif %}
+        {% if (page < pages) or (pages > 1) %}
+        <li class="page-item {% if page == pages %} disabled{% endif %}">
+            <a class="page-link" href="{{ path(route, {'page': page + 1}) }}">&raquo;</a>
+        </li>
+        {% endif %}
+    </ul>
+</div>

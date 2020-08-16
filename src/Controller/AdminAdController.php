@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Ad;
 use App\Form\AdType;
 use App\Repository\AdRepository;
+use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,12 +14,32 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class AdminAdController extends AbstractController
 {
     /**
-     * @Route("/admin/ads", name="admin_ads_index")
+     * @Route("/admin/ads/{page<\d+>?1}", name="admin_ads_index", requirements={"page": "\d+"})
      */
-    public function index(AdRepository $repo)
+    public function index(AdRepository $repo, $page = 1, PaginationService $pagination)
     {
+
+        //METHODE FIND QUI PERMET DE TROUVER UN ENREGISTREMENT GRACE A SON ID
+        //recherche par id
+        //$ad = $repo->find(300);
+
+        //recherche par criteres (multiples ou non)
+        //Agit comme des conditions and
+        /*$ad = $repo->findOneBy([
+            'price' => 183,
+            'id' => 320
+        ]);
+        */
+
+        // Trouver plusieurs annonces
+        //$ads = $repo->findBy([criteres], [Orders], Limite, Offset(debut))
+        //$ads = $repo->findBy([], [], 5, 0);
+        //dump($ads);
+        $pagination->setEntityClass(Ad::class)
+                    ->setCurrentPage($page);
+
         return $this->render('admin/ad/index.html.twig', [
-            'ads' => $repo->findAll(),
+            'pagination' => $pagination,
         ]);
     }
     /**

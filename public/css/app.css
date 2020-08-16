@@ -59,3 +59,8 @@ span.rating i {
 .alert .btn {
     color: white;
 }
+
+table #table-user{
+    width: 50%; /* à adapter selon vos contraintes */
+    table-layout: fixed; 
+  }

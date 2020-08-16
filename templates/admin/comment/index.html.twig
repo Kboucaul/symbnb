@@ -17,8 +17,8 @@
             </tr>
         </thead>
         <tbody>
-        {% if comments | length %}
-            {% for comment in comments %}
+        {% if pagination.data | length %}
+            {% for comment in pagination.data %}
                 <tr>
                     <td>{{comment.id}}</td>
                     <td>{{comment.createdAt | date('d/m/Y')}}</td>
@@ -40,5 +40,6 @@
         {% endif %}
         </tbody>
     </table>
+  {{ pagination.display() }}
 </div>
 {% endblock %}
